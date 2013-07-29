@@ -91,6 +91,7 @@ class openstack::glance (
 
 
  if $glance_backend == "swift" {
+    $sl_swift_data = parsejson($sl_object_store)
     if !defined(Package['swift']) {
       include ::swift::params
       package { "swift":
@@ -101,10 +102,11 @@ class openstack::glance (
     Package["swift"] ~> Service['glance-api']
 
     class { "glance::backend::$glance_backend":
-      swift_store_user => "services:glance",
-      swift_store_key=> $glance_user_password,
+      swift_store_user => $sl_swift_data[user],
+      swift_store_key=> $sl_swift_data[key],
       swift_store_create_container_on_put => "True",
-      swift_store_auth_address => "http://${keystone_host}:5000/v2.0/"
+      swift_store_auth_version => "1",
+      swift_store_auth_address => $sl_swift_data[url]
     }
   } else {
     class { "glance::backend::$glance_backend": }
