@@ -170,6 +170,7 @@ if !$debug
         cinder_volume_group     => "cinder",
         manage_volumes          => $cinder ? { false => $manage_volumes, default =>$is_cinder_node },
         use_syslog              => true,
+        glance_backend          => 'swift',
         syslog_log_level        => $syslog_log_level,
         syslog_log_facility_glance   => $syslog_log_facility_glance,
         syslog_log_facility_cinder => $syslog_log_facility_cinder,
